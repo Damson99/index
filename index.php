@@ -1,5 +1,4 @@
 <?php
-include 'constants.php';
 spl_autoload_register('classLoader');
 session_start();
 
@@ -22,19 +21,26 @@ if(isset($_GET['action'])){
 }
 $komunikat = $sefora->getMessage();
 ?>
-<?php if(!isset($sefora)) die(); ?>
+<?php if(!isset($sefora)) die();?>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="Shortcut icon" href="favicon.png">
+    <link rel="Shortcut icon" href="img/favicon.png">
     <title>Sefora</title>
 </head>
 <body>
     <div>
-        <?php require("header.php"); ?>
+        <?php require("header.php"); ?><br><br><br><br><br>
         <main>
+            <div class="komunikat">
+                <?php
+                    if($komunikat){
+                        echo $komunikat;
+                    }
+                ?>
+            </div>
             <?php
                 switch($action){
                     case 'login':
@@ -42,6 +48,13 @@ $komunikat = $sefora->getMessage();
                         break;
                     case 'registerUser':
                         include 'loginSupport/register.php';
+                        break;
+                    case 'showRegForm':
+                        if($sefora->zalogowany){
+                            $sefora->setMessage("Jesteś zalogowany");
+                        }
+                        $info='';
+                        $sefora->showRegForm($info);
                         break;
                     case 'logout':
                         include 'loginSupport/logout.php';
@@ -55,12 +68,6 @@ $komunikat = $sefora->getMessage();
                         }
                         include 'loginSupport/loginForm.php';
                         break;
-                    case 'showRegForm':
-                        if($sefora->zalogowany){
-                            $sefora->setMessage("Posiadasz już konto");
-                        }
-                        $sefora->showRegForm();
-                        break;
                     case 'showDetails':
                         $sefora->showDetails();
                         break;
@@ -69,43 +76,156 @@ $komunikat = $sefora->getMessage();
                         break;
                     case 'toBasket':
                         switch($sefora->toBasket()){
-                            case INVALID_ID:
-                            case FORM_DATA_MISSING:
-                                $sefora->setMessage("Błędny identyfikator");
-                                break;
                             case ACTION_OK:
-                                $sefora->setMessage("Dodano");
+                                $sefora->setMessage("Dodano do koszyka");
                                 break;
-                            default:
-                                $sefora->setMessage("Błąd serwera");
+                            case INVALID_ID:
+                                $sefora->setMessage("Błąd");
+                                break;
                         }
-                        header("Location:index.php?action=showBasket");
-                        break;
-                    case 'modifyBasket':
-                        $sefora->setMessage("Zaktualizowano");
-                        $sefora->modifyBasket();
-                        header("Location:index.php?action=showBasket");
+                        header("Location:index.php?action=braceletFor&brn=all");
                         break;
                     case 'deleteBasket':
+                        $sefora->deleteBasket();
                         header("Location:index.php?action=showBasket");
                         break;
                     case 'checkout':
                         $sefora->checkout();
                         break;
-                    case 'editAccountForm':
-                        $sefora->showEditForm();
+                    case 'userUpdateForm':
+                        $reg=new Registration($sefora->dbo);
+                        $reg->showRegForm('up');
                         break;
-                    case 'editAccount':
-                        switch($sefora->editAccount()){
+                    case 'userUpdate':
+                        $basket=new Basket($sefora->dbo);
+                        switch($basket->userUpdate()){
                             case ACTION_OK:
-                                $sefora->setMessage("Uaktualniono"); 
-                                header("Location:index.php");
+                                $sefora->setMessage("Akcja udana.");
+                                header("Location:index.php?action=showBasket");
+                                break;
+                            case FORM_DATA_MISSING:
+                                $sefora->setMessage("Wypełnij wymagane pola formularza");
+                                header("Location:index.php?action=userUpdateForm");  
+                                break;
+                            case LOGIN_FAILED:
+                                $sefora->setMessage("imię od 3 do 30"."<br>"."nazwisko od 3 do 30");
+                                header("Location:index.php?action=userUpdateForm");  
+                                break;
+                            case ACTION_FAILED:
+                                $sefora->setMessage("Obecnie rejestracja nie jest możliwa");
+                                header("Location:index.php?action=userUpdateForm");  
+                                break;
+                            case USER_NAME_ALREADY_EXISTS:
+                                $sefora->setMessage("Konto nie istnieje. Prosimy założyć nowe.");
+                                header("Location:index.php?action=userUpdateForm");  
+                                break;
+                            case NO_LOGIN_REQUIRED:
+                                $sefora->setMessage("Najpierw się zaloguj.");
+                                header("Location:index.php?action=userUpdateForm");  
                                 break;
                             case SERVER_ERROR:
-                            default:
                                 $sefora->setMessage("Błąd serwera");
-                                header("Location:index.php?action=editAccountForm"); 
+                                header("Location:index.php?action=userUpdateForm");
+                                break;
                         }
+                        break;
+                    case 'saveOrder':
+                        $id=0;
+                        $basket=new Basket($sefora->dbo);
+                        switch($basket->saveOrder($id)){
+                            case EMPTY_BASKET:
+                                $sefora->setMessage("Koszyk jest pusty");
+                                return;
+                            case LOGIN_REQUIRED:
+                                $sefora->setMessage("Musisz się zalogować");
+                                header("Location:index.php?action=showLoginForm");
+                                break;
+                            case ACTION_OK:
+                                $sefora->setMessage("Zamówienie zostało złożone. Identyfikator zamówienia to: ".$id);
+                                header("Location:index.php?action=braceletFor&brn=all");
+                                return;
+                            case SERVER_ERROR:
+                                $sefora->setMessage("Błąd serwera");
+                        }
+                        header("Location:index.php?action=checkout");
+                        break;
+                    case 'toWishList':
+                        switch($sefora->toWishList()){
+                            case ACTION_OK:
+                                $sefora->setMessage("Dodano");
+                                break;
+                            case NO_LOGIN_REQUIRED:
+                                $sefora->setMessage("Musisz się najpierw zalogować");
+                                break;
+                            case INVALID_ID;
+                                $sefora->setMessage("Nieprawidłowy identyfikator");
+                                break;
+                            case USER_NAME_ALREADY_EXISTS:
+                                $sefora->setMessage("Dany produkt jest już na liście życzeń");
+                                break;
+                            case SERVER_ERROR:
+                                $sefora->setMessage("Błąd serwera"); 
+                        }
+                        header("Location:index.php?action=braceletFor&brn=all");
+                        break;
+                    case 'showWishList':
+                        switch($sefora->showWishList()){
+                            case ACTION_OK:
+                                $sefora->setMessage("Dodano nowy produkt");
+                                break;
+                            case EMPTY_BASKET:
+                                $sefora->setMessage("Lista życzeń jest pusta");
+                                break;
+                            case LOGIN_REQUIRED:
+                                $sefora->setMessage("Aby zobaczyć listę życzeń musisz się zalogować");
+                                break;
+                            case SERVER_ERROR:
+                                $sefora->setMessage("Błąd serwera");
+                                break;
+                        }
+                        break;
+                    case 'deleteWishList':
+                        switch($sefora->deleteWishList()){
+                            case ACTION_OK:
+                                $sefora->setMessage("Usunięto");
+                                break;
+                            case LOGIN_REQUIRED:
+                                $sefora->setMessage("Musisz się zalogować");
+                                break;
+                            case INVALID_ID;
+                                $sefora->setMessage("Nieprawidłowy identyfikator");
+                                break;
+                            case SERVER_ERROR:
+                                $sefora->setMessage("Błąd serwera");
+                        }
+                        header("Location:index.php?action=showWishList");
+                        break;
+                    case 'changePassForm':
+                        $sefora->changePassForm();
+                        break;
+                    case 'checkPass':
+                        switch($sefora->checkPass()){
+                            case ACTION_OK:
+                                $sefora->setMessage("Zmieniono hasło");
+                                header("Location:index.php?action=braceletFor&brn=all");
+                                break;
+                            case FORM_DATA_MISSING:
+                                $sefora->setMessage("Wypełnij wymagane pole formularza");
+                                header("Location:index.php?action=changePassForm");
+                                break;
+                            case LOGIN_FAILED:
+                                $sefora->setMessage("Hasło musi zawierać od 6 do 50 znaków");
+                                header("Location:index.php?action=changePassForm");
+                                break;
+                            case INVALID_PASS:
+                                $sefora->setMessage("Stare hasło jest nieprawidłowe");
+                                header("Location:index.php?action=changePassForm");
+                                break;
+                            case SERVER_ERROR:
+                                $sefora->setMessage("Błąd serwera");
+                                header("Location:index.php?action=changePassForm"); 
+                        }
+                        break;
                     case 'deleteAccountForm':
                         include 'templates/deleteForm.php';
                         break;
@@ -113,10 +233,9 @@ $komunikat = $sefora->getMessage();
                         switch($sefora->deleteAccount()){
                             case ACTION_OK:
                                 $sefora->setMessage("Usunięto"); 
-                                header("Location:index.php");
+                                header("Location:index.php?action=braceletFor&brn=all");
                                 break;
                             case SERVER_ERROR:
-                            default:
                                 $sefora->setMessage("Błąd serwera");
                                 header("Location:index.php?action=deleteAccountForm");
                         }
@@ -124,11 +243,12 @@ $komunikat = $sefora->getMessage();
                     case 'showMain':
                     default:
                         include 'main.php';
-                        $sefora->bransoletFor();
                 } 
             ?>
+            <a href="" class="backToTop">&#8743;</a>
         </main>
-        <?php include 'footer.php'; ?>   
+        <?php include 'footer.php'; ?> 
+        <center>Copyright © Sefora</center><br>
     </div>
 </body>
 </html>

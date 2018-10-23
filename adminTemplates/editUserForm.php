@@ -1,6 +1,6 @@
 <form action="index2.php?action=usersAdmin&amp;wtd=<?=$wtd?>" method="post">
     <div id="loginFormWrapper">
-        <img src="imageLog.jpg" class="imageLog"><br>
+        <img src="img/imageLog.jpg" class="imageLog"><br>
         <p>Id</p>
         <input type="text" name="id" <?=$readonly?> value="<?=$id?>">
         <p>Imię</p>
@@ -10,7 +10,7 @@
         <p>Hasło</p>
         <input type="password" name="haslo" value="">
         <p>E-mail</p>
-        <input type="email" name="email" value="<?=$email?>">
+        <input type="email" name="email" <?=$readonly?> value="<?=$email?>">
         <p>Ulica</p>
         <input type="text" name="ulica" value="<?=$ulica?>">
         <p>Numer domu</p>
@@ -27,5 +27,10 @@
         <?php if($wtd=='modifyUser'):?>
             <center><a href="index2.php?action=usersAdmin&amp;wtd=deleteUser&amp;id=<?=$id?>">Usuń</a></center>
         <?php endif;?>
+        <div class="komunikat">
+            <?php if(isset($komunikat)){
+                        echo $komunikat;
+                    }?>
+        </div>
     </div>
 </form>

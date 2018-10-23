@@ -1,8 +1,8 @@
 body{
     width: 100%;
     margin: 0 auto;
-    font-family: serif;
-    font-weight: 300;
+    font-family: Arial Narrow, sans-serif;
+    font-weight: 600;
 }
 body::-webkit-scrollbar-track{
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -16,22 +16,38 @@ body::-webkit-scrollbar{
 body::-webkit-scrollbar-thumb{
 	background-color: #fe7f00;
 }
-nav{
-    margin: 20px 0px 10px 10px;
+.backToTop{
+    z-index: 50;
+    padding: 6px 15px 10px 15px;
+    border-radius: 10px;
+    border: none;
+    background: #444444;
+    opacity: 1;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    color: white;
+    font-size: 30px;
+}
+.backToTop:hover{
+    text-decoration: none;
+}
+#footerNav{
+    margin: 18px 150px 10px 10px;
     float: left;
     display: grid;
 }
-nav img{
+#footerNav img{
     cursor: pointer;
     width: 40px;
     height: 40px;
 }
-nav button{
+#footerNav button{
     background-color: transparent;
     border: none;
     transition: 0.4s transform ease-in-out;
 }
-nav a{
+#footerNav a{
     color: white;
 }
 aside{
@@ -46,28 +62,56 @@ aside ul{
     position: absolute;
     padding: 0;
 }
-aside ul li a{
-    width: 100%;
-    height: 100%;
-    background: translate;
-    box-sizing: border-box;
-}
-nav button:focus ~ aside, .side-menu:active{
+#footerNav button:focus ~ aside, .side-menu:active{
     transform: translateX(117px);
 }
-nav button:focus{
+#footerNav button:focus{
     outline: 0;
-    transform: translateY(-117px);
+    transform: translateX(-117px);
+}
+#mainNav>ul>li{
+    list-style-type: none;
+    display: inline-block;
+    padding: 0px 50px;
+}
+#mainNav>ul>li:hover{
+    background-color: transparent;
+    position: relative;
+}
+ul#subMenu{
+    position: absolute;
+    background-color: white;
+    list-style-type: none;
+    width: 200px;
+    padding: 10px 10px 10px -10px;
+    margin-left: 0px;
+    padding-top: 5px;
+    opacity: 0;
+    border: 1px solid black;
+    z-index: -10;
+}
+ul#subMenu a{
+    float: left;
+    font-size: 20px;
+    padding:10px 30px 10px 0px;
+}
+ #mainNav li:hover #subMenu{
+     z-index: 20;
+     opacity: 1;
+}
+ul#subMenu a:hover{
+    text-decoration: underline;
 }
 .komunikat{
     width: auto;
     font-weight: 300;
     display: grid;
-    font-size: 21px;
+    font-size: 23px;
     text-align: center;
     color: #ff0000;
     background-color: #ffeaed;
     overflow: auto;
+    margin: 60px 0px 30px 0px;
 }
 a{
     text-decoration: none;
@@ -84,27 +128,34 @@ a:hover{
     border-bottom-right-radius: 60px;
 }
 .imageLog{
-    margin: -140px 0px 0px 70px;
+    display: grid;
+    margin: -140px 0px 10px 70px;
     width: 140px;
     height: 140px;
-    position: absolute;
     border-radius: 50%;
 }
 #topDiv, footer{
+    z-index: 30;
+    position: fixed;
     box-shadow: 0px 4px 5px #444444;
     background-image: linear-gradient(to right,#999999,black,black,black,black, #444444);
     width: 100%;
-    height: 85px;
+    min-height: 85px;
+    max-height: 140px;
     color: white;
-    text-align: center;
-    margin: 0px;
 }
 .header{
-    margin: 30px 0px 0px 24%;
+    margin: 30px 0px 0px 20%;
     width: auto;
     height: 50px;
     float: left;
     text-align: center;
+}
+.hiUser{
+    margin-top: 4px;
+    min-width: 100px;
+    height: 20px;
+    font-size: 17px;
 }
 .search{
     margin-left: 120px;
@@ -133,11 +184,20 @@ a:hover{
     border-bottom: 2px solid #fff;
 }
 .loginInfo{
-    padding: 0px;
+    float: right;
     display: grid;
+    grid-template-columns: repeat(6,1fr);
+    padding: 30px;
     width: auto;
     height: 80px;
-    float: right;
+}
+.loginInfo div{
+    overflow: hidden;
+    max-width:100px;
+}
+.loginInfo img{
+    width:25px;
+    height:25px;
 }
 a{
     font-size: 22px;
@@ -150,38 +210,35 @@ a{
 .pOfferts,#userMenu{
     display: grid;
     font-weight: 100;
-    box-shadow:1px 4px 6px -2px #444444;
     padding: 10px;
-    margin: 0;
+    margin: 0px 200px 0px 200px;
     text-align: center;
-    font-size: 40px;
+    font-size: 30px;
 }
 .pDiv{
-    margin: -10px;
     text-align: center;
     display: grid;
-    grid-template-columns:repeat(4,2fr);
 }
 .pDiv a{
     height: 40px;
     width: auto;
     font-weight: 100;
-    font-size: 35px;
+    font-size: 30px;
+    color: black;
 }
 .pDiv a:hover{
     color: black;
     text-decoration: none;
-    border-bottom: 2px solid black;
 }
 #loginFormWrapper{
-    width: 350px;
+    max-width: 350px;
     height: auto;
     background: #222222;
     color: #fff;
     margin: auto;
-    margin-top: 6%;
+    margin-top: 8%;
     padding: 70px 30px;
-    margin-bottom: 12%;
+    margin-bottom: 10%;
     box-sizing: border-box;
 }
 h1{
@@ -191,6 +248,7 @@ h1{
     font-size: 28px;
 }
 #loginFormWrapper p, a{
+    text-align: center;
     font-size: 19px;
     display: grid;
     font-weight: bold;
@@ -235,16 +293,53 @@ h1{
     color: #fff;
 }
 footer{
-    height: 100px;
+    padding-top: 20px;
+    position: relative;
+    min-height: 200px;
     background:#555555;
+    margin-bottom: 20px;
 }
-.headerLinks{
+footer div{
+    width: 300px;
+    margin-left: 50px;
+    float: left;
+}
+ul{
+    list-style-type: none;
+}
+#couple{
+    margin: 2% 19% 2% 21%;
     display: grid;
+    grid-template-columns:repeat(3,1fr);
+    overflow: hidden;
+}
+#couple a{
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    width: 350px;
+    height: 350px;
+    color: white;
+    font-size: 25px;
+    box-sizing: border-box;
+}
+#couple img{
+    z-index: -1;
+    position: absolute;
+    width: 350px;
+    height: 350px;
+}
+#couple a:hover{
+    color: black;
+    text-decoration: none;
+    transform: scale(1.1);
+}
+#couple a:hover img{
+    opacity: 0.5;
 }
 #mainWrapper{
-    margin: 2% 12% 2% 14%;
+    margin: 2% 19% 2% 21%;
     display: grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(4,1fr);
 }
 .wrapper{
     display: grid;
@@ -252,6 +347,7 @@ footer{
     height: auto;
     width: 250px;
     margin-bottom: 35px;
+    margin-left: 20px;
 }
 .wrapper:hover{
     box-shadow: 0px 0px 15px #444444;
@@ -277,49 +373,62 @@ footer{
     line-height: 25px;
     display: grid;
 }
-.basketLink{
-    background-color:#999999; 
+.secondWrapper a{
+    background-color:#333333; 
     text-align: center;
-    height: 35px;
+    height: 30px;
+    padding-top: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    color:#EEEEEE;
 }
-.basketLink:hover{
+.secondWrapper a:hover{
+    text-decoration: none;
     background-color: black;
 }
-.basketLink a{
-    margin-top: 4px;
-    text-decoration: none;
-    font-size: 22px;
-    color:#EEEEEE;
+#pagination{
+    font-size: 20px;
+    margin: 100px 0px 40px 0px;
+    width: 300px;
+    padding: 0px;
+}
+#pagination a{
+    font-size: 20px;
+    float: right;
+}
+.activePagination{
+    margin-left: 10px;
+    margin-right: -40px;
+    color: blue;
+}
+.space{
+    
 }
 #detailsDiv,#secondDetails,#basketDetails{
     margin: 2% 15% 2% 15%;
     display: grid;
     background-color: #EEEEEE;
     height: auto;
-    width: auto;
-    padding: 30px;
+    width: 1300px;
+    padding: 20px;
 }
 #secondDetails p{
-    text-align: center;
     margin: 0 0 1% 0;
     font-size: 29px;
-    color: #444444;
-    background-color: transparent;
+    color: black;   
+    border-bottom: 1px solid black;
 }
 article{
     width: 60%;
     font-size: 19px;
 }
-#detailsDiv img{
-    width: 80px;
-    height: 80px;
-    display: grid;
-    margin-bottom: 20px;
-    grid-template-rows: repeat(3,1fr);
-}
 #detailsDiv .pic{
     width: 500px;
     height: 500px;
+}
+.list{
+    display: grid;
+    float: left;
 }
 #detailsDiv h1,h2{
     color: #333333;
@@ -329,13 +438,14 @@ article{
 #detailsDiv h1{
     border-bottom: 1px solid black;
 }
-.rightDiv,.basketDiv{
+.rightDiv{
     grid-column:3/8; 
     width: 100%;
     color: black;
     font-size: 20px;
 }
-.rightDiv a{
+#basketLink{
+    margin-top: -10px;
     padding: 10px;
     text-align: center;
     height: auto;
@@ -346,35 +456,119 @@ article{
     text-decoration: none;
     margin-bottom: 15px;
 }
-.rightDiv a:hover{
+#basketLink:hover{
     background-color: grey;
+    text-decoration: none;
 }
+.heart{
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  background: #ff0000;
+  border-bottom-right-radius: 5px;
+  position: relative;
+  color: transparent;
+  margin: 6px 116px;
+  animation-name: pulse;
+  animation-iteration-count: infinite;
+  animation-duration: 0.7s;
+  transform: rotate(45deg);
+}
+.heart::after, .heart::before{
+  content: '';
+  width: 17px;
+  height: 17px;
+  background: #ff0000;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: -50%;
+}
+.heart::after{
+  top: -50%;
+  left: 0;
+}
+.heart:hover,.heart:hover::after, .heart:hover::before{
+    background-color: black;
+}
+#none{
+    background-color: transparent;
+    
+}
+/*#none:hover{
+    background-color: black;
+}*/
 .rightDiv p{
     color:#666666;
 }
-#basketDetails form{
+.basketDiv{
+    width: 100%;
+    color: black;
+    font-size: 20px;
+    grid-column:2/4;  
+}
+#basketDetails{
+    grid-template-columns: repeat(2,1fr);
+    padding-bottom: 40px;
+}
+#basketDetails input[type=submit]{
+    border: none;
+    height: 30px;
+    background: #fe7f00;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: auto;
+}
+#basketDetails input[type="submit"]:hover{
+    border-bottom: 3px solid white;
+    outline: none;
+}
+.basketItem{
+    margin-top:60px;
     display: grid;
-    float: left;
+    grid-template-columns: repeat(5,1fr);
+    grid-gap: 40px;
+}
+.basketItem a{
+    color: black;
+}
+.basketItem div{
+    width: 350px;
+}
+.basketItem input[type="number"]{
+    height: 15px;
+    width: 50px;
 }
 #basketDetails img{
     width: 150px;
     height: 150px;
+    margin-bottom: -20px;
 }
 #basketDetails a{
     font-size: 22px;
     display: inline-block;
+    
 }
 #basketDetails p{
     text-align: center;
     margin: 0px;
     font-size: 22px;
 }
+#deleteProduct{
+    color: red;
+}
+#deleteProduct:hover{
+    text-decoration: none;
+    
+}
 #userMenu{
     grid-template-columns:repeat(6,2fr);
 }
 #usersList{
     font-size: 22px;
-    margin: 2% 30%;
+    margin: 2%;
 }
 #usersList a{
     font-size: 22px;
@@ -386,7 +580,69 @@ article{
 #usersList tbody > tr:nth-child(odd){
     background-color: #cccccc;
 }
-
+.slideshow-container{
+    z-index: 1;
+    position: relative;
+    height: 550px;
+    width: 550px;
+}
+.mySlides{
+    display: none;
+}
+.prev, .next{
+    margin-top: -300px;
+    cursor: pointer;
+    position: absolute;
+    width: auto;
+    color: black;
+    font-weight: bold;
+    font-size: 50px;
+    transition: 0.6s ease;
+}
+.prev{
+    border-radius: 0px 3px 3px 0px;
+}
+.next{
+    border-radius: 3px 0px 0px 3px;
+    right: 50px;
+}
+.prev:hover, .next:hover{
+    opacity: 0.6;
+    height: auto;
+    text-decoration: none;
+}
+.text{
+    color: white;
+    margin-top: 4px;
+    margin-left: 390px;
+    font-size: 23px;
+    font-family: monospace;
+}
+.dot{
+    cursor:pointer;
+    height: 80px;
+    width: 80px;
+    margin: 0 5px;
+    background-color: #494949;
+    transition: background-color 0.6s ease;
+}
+.active, .dot:hover{
+    opacity: 0.4;
+}
+.fade{
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+@-webkit-keyframes fade{
+    from {opacity: .4} 
+    to {opacity: 1}
+}
+@keyframes fade{
+    from {opacity: .4} 
+    to {opacity: 1}
+}
 
 
 

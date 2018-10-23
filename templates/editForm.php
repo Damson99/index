@@ -1,22 +1,14 @@
-<?php if(!isset($sefora)) die();?>
+<?php if(!isset($this)) die();?>
 <div id="loginFormWrapper">
-    <img src="imageLog.jpg" class="imageLog"><br>
+    <img src="img/imageLog.jpg" class="imageLog"><br>
     <h1>Edytuj</h1>
-    <form action="index.php?action=login" method="post">
-        <p>Email</p>
-        <input type="email" name="email" placeholder="Wprowadź email">
-        <p>Hasło</p>
-        <input type="password" name="haslo" placeholder="Wprowadź hasło">
-        <input type="submit" value="Zaloguj">
+    <form action="index.php?action=checkPass" method="post">
+        <p>Wprowadź stare hasło</p>
+        <input type="password" name="oldPass" placeholder="Wprowadź hasło">
+        <p>Wprowadź nowe hasło</p>
+        <input type="password" name="newPass" placeholder="Wprowadź hasło">
+        <input type="submit" value="Zmień">
     </form>
     <a href="">Nie pamiętam hasła</a>
-    <a href="index.php?action=showRegForm">Stwórz konto</a>
-    <a href="index.php">Wróć do strony głównej</a>
-    <div class="komunikat">
-        <?php 
-            if($komunikat){
-                echo $komunikat;
-            }
-        ?>
-    </div>
+    <a href="index.php?action=bransoletFor&brn=all">Wróć do strony głównej</a>
 </div>

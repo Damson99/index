@@ -1,7 +1,7 @@
 <?php
+include 'constants.php';
 class SeforaAdmin{
     private $dbo=null;
-    public $zalogowany_adm=null;
     
     function __construct($host,$user,$pass,$db){
         $this->dbo=$this->initDB($host,$user,$pass,$db);
@@ -41,37 +41,44 @@ class SeforaAdmin{
         }
         $user=$_POST['user'];
         $pass=$_POST['haslo'];
-        $user=strlen($user);
-        $pass=strlen($pass);
-        if($user < 3 || $user > 20 || $pass < 6 || $pass > 40){
+        $userLength=strlen($user);
+        $passLength=strlen($pass);
+        if($userLength < 5 || $userLength > 50 || $passLength < 6 || $passLength > 50){
             return LOGIN_FAILED;
         }
         $user=$this->dbo->real_escape_string($user);
         $pass=$this->dbo->real_escape_string($pass);
-        $query="SELECT Id, Imie, Haslo FROM Klienci WHERE `Imie`=$user";
-        if($result->num_rows != 1){
+        $query="SELECT `Id`, `Imie`, `Haslo` FROM Klienci WHERE `Imie`='$user'";
+        if(!$result=$this->dbo->query($query)){
+            return SERVER_ERROR;
+        }
+        if($result->num_rows <> 1){
             return LOGIN_FAILED;
         }else{
-            $row=$result->fetch_row;
+            $row=$result->fetch_row();
             $pass_db=$row[2];
-            if(crypt($pass, $pass_db) != $pass_db){
+            $salt='5o3_5$f';
+            $blowfish='3S1$5_3';
+            $hashedPass=crypt($pass,$salt.$blowfish);
+            if($hashedPass !== $pass_db){
                 return LOGIN_FAILED;
             }else{
-                $_SESSION['zalogowany_adm']=$row[1];
-            }
-            if(isset($_SESSION['przywileje'])){
-                $_SESSION['przywileje']=array();
-            }
-            $query="SELECT PrzywilejeId FROM Klienci_Przywileje WHERE UserId="."$row[0]";
-            if($result=$this->dbo->query($query)){
-                while($row=$result->fetch_row()){
-                    $_SESSION['przywileje'][$row[0]]=true;
+                $nazwa=$row[1];
+                $_SESSION['zalogowany_adm'] = new User($row[0],$nazwa);
+                $this->zalogowany=new User($row[0],$nazwa);
+                if(!isset($_SESSION['przywileje'])){
+                    $_SESSION['przywileje']=array();
                 }
-            }
-            if(isset($SESSION['przywileje'][1])){
+                $query="SELECT PrzywilejeId FROM Klienci_Przywileje WHERE UserId='$row[0]'";
+                if($result=$this->dbo->query($query)){
+                    while($row=$result->fetch_row()){
+                        $_SESSION['przywileje']=$row[0];
+                    }
+                }
+                if($_SESSION['przywileje']!=='1'){
+                    return NO_ADMIN_RIGHTS;
+                }
                 return LOGIN_OK;
-            }else{
-                return NO_ADMIN_RIGHTS;
             }
         }
     }
@@ -86,22 +93,65 @@ class SeforaAdmin{
             session_destroy();
         }
     }
-    function usersAdmin(){
-        $ua = new UsersAdmin($this->dbo);
+    function braceletsAdmin(){
+        $ba = new BraceletsAdmin($this->dbo);
         if(isset($_GET['wtd'])){
             $wtd=$_GET['wtd'];
         }else{
-            $wtd='showList';
+            $wtd='';
         }
         switch($wtd){
-            case 'addBransoletForm':
-                $ua->addBransoletForm('add');
+            case 'showOrders':
+                $limit=20;
+                switch($ba->showOrders($limit)){
+                    case SERVER_ERROR:
+                        $this->setAdminMessage("Błąd serwera");
+                        header("Location:index2.php?action=braceletsAdmin&wtd=showOrders");
+                        break;
+                }
                 break;
-            case 'editBransoletForm':
-                $ua->addBransoletForm('edit');
+            case 'orderDetails':
+                switch($ba->orderDetails()){
+                    case INVALID_ID:
+                        $this->setAdminMessage("Błędny identyfikator");
+                        break;
+                    case SERVER_ERROR:
+                        $this->setAdminMessage("Błąd serwera");
+                        break;
+                }
                 break;
-            case 'addBransolet':
-                switch($ua->editBransolet('add',$id)){
+            case 'orderDetailsBrn':
+                switch($ba->orderDetailsBrn()){
+                    case INVALID_ID:
+                        $this->setAdminMessage("Błędny identyfikator");
+                        break;
+                    case SERVER_ERROR:
+                        $this->setAdminMessage("Błąd serwera");
+                        break;
+                }
+                break;
+            case 'updateOrders':
+                switch($ba->updateOrders()){
+                    case ACTION_OK:
+                        $this->setAdminMessage("Zaktualizowano");
+                        break;
+                    case INVALID_ID:
+                        $this->setAdminMessage("Nieprawidłowy identyfikator");
+                        break;
+                    case SERVER_ERROR:
+                        $this->setAdminMessage("Błąd serwera");
+                        break;
+                }
+                header("Location:index2.php?action=braceletsAdmin&wtd=showOrders");
+                break;
+            case 'addBraceletForm':
+                $ba->addBraceletForm('add');
+                break;
+            case 'editBraceletForm':
+                $ba->addBraceletForm('edit');
+                break;
+            case 'addBracelet':
+                switch($ba->editBracelet('add',$id)){
                     case ACTION_OK:
                         $this->setAdminMessage("Dodano nową bransoletkę");
                         break;
@@ -115,10 +165,10 @@ class SeforaAdmin{
                     default:
                         $this->setAdminMessage("Błąd serwera");
                 }
-                header("Location:index2.php?action=usersAdmin&wtd=addBransoletForm");
+                header("Location:index2.php?action=braceletsAdmin&wtd=addBraceletForm");
                 break;
-            case 'editBransolet':
-                switch($ua->editBransolet('edit',$id)){
+            case 'editBracelet':
+                switch($ba->editBracelet('edit',$id)){
                     case ACTION_OK:
                         $this->setAdminMessage("Edytowano bransoletkę");
                         break;
@@ -126,13 +176,13 @@ class SeforaAdmin{
                     default:
                         $this->setAdminMessage("Błąd serwera");
                 }
-                header("Location:index2.php?action=usersAdmin&wtd=addBransoletForm");
+                header("Location:index2.php?action=braceletsAdmin&wtd=addBraceletForm");
                 break;
-            case 'searchBransoletForm':
-                $ua->searchBransoletForm();
+            case 'searchBraceletForm':
+                $ba->searchBraceletForm();
                 break;
-            case 'searchBransolet':
-                switch($ua->searchBransolet()){
+            case 'searchBracelet':
+                switch($ba->searchBracelet()){
                     case ACTION_OK:
                         break;
                     case USER_NOT_FOUND:
@@ -152,8 +202,8 @@ class SeforaAdmin{
                         echo "Błąd serwera";
                 }
                 break;
-            case 'deleteBransolet':
-                switch($ua->delete('bransolet',$id)){
+            case 'deleteBracelet':
+                switch($ba->delete()){
                     case ACTION_OK:
                         $this->setAdminMessage("Usunięto bransoletkę");
                         break;
@@ -167,10 +217,20 @@ class SeforaAdmin{
                     default:
                         $this->setAdminMessage("Błąd serwera");
                 }
-                header("Location:index2.php?action=usersAdmin&wtd=addBransoletForm");
+                header("Location:index2.php?action=braceletsAdmin&wtd=addBraceletForm");
                 break;
+        }
+    }
+    function usersAdmin(){
+        $ua = new UsersAdmin($this->dbo);
+        if(isset($_GET['wtd'])){
+            $wtd=$_GET['wtd'];
+        }else{
+            $wtd='';
+        }
+        switch($wtd){
             case 'deleteUser':
-                switch($ua->delete('user',$id)){
+                switch($ua->delete()){
                     case ACTION_OK:
                         $this->setAdminMessage("Usunięto użytkownika");
                         break;
@@ -271,8 +331,8 @@ class SeforaAdmin{
                 }
                 break;
             case 'showList':
-            default:
                 $ua->showList(ROWS_ON_PAGE);
+                break;
         }
     }
 }

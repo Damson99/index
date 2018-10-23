@@ -1,5 +1,4 @@
 <?php
-include 'constants.php';
 spl_autoload_register('classLoader');
 session_start();
 
@@ -15,7 +14,7 @@ function classLoader($nazwa){
         throw new Exception("Brak pliku z definicją klasy");
     }
 }
-$action='showLoginFormAdmin';
+$action='showLoginForm';
 if(isset($_GET['action'])){
     $action=$_GET['action'];
 }
@@ -26,52 +25,64 @@ switch($action){
             switch($sefora->loginAdmin()){
                 case LOGIN_OK:
                     $sefora->setAdminMessage("Zalogowano");
+                    header("Location:index2.php?action=braceletsAdmin");
                     break;
                 case LOGIN_FAILED:
                     $sefora->setAdminMessage("Nieprawidłowa nazwa lub hasło");
+                    header("Location:index2.php");
                     break;
                 case NO_ADMIN_RIGHTS:
-                    $sefora->setAdminMessage("Brak uprawnień");
                     $sefora->logoutAdmin();
+                    header("Location:index.php?action=braceletFor&brn=all");
                     break;
                 case SERVER_ERROR:
-                default:
                     $sefora->setAdminMessage("Błąd serwera. Przepraszamy");
                     $sefora->logoutAdmin();
+                    header("Location:index.php?action=braceletFor&brn=all");
+                    break;
             }
-            header("Location:index2.php");
         }
         break;
     case 'logoutAdmin':
         $sefora->logoutAdmin();
         header("Location:index2.php");
+        break;
 }
 if(!isset($sefora->zalogowany_adm)){
-    /*$action='showLoginForm';*/
-    $action='addBransolet';
+    $action='showLoginForm';
 }
-$limit=5;
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="Shortcut icon" href="favicon.png">
     <title>Sefora Administracja</title>
 </head>
 <body>
-    <?php require 'adminTemplates/headerAdmin.php';
-    switch($action){  
-        case 'showLoginForm':
-            include 'adminTemplates/loginFormAdmin.php';
-            $sefora->usersAdmin();
-            break;
-        case 'usersAdmin':
-        default:
-            include 'adminTemplates/usersAdminMenu.php';
-            $sefora->usersAdmin();
-    }
+    <?php require 'adminTemplates/headerAdmin.php';?>
+    <div class="komunikat">
+        <?php
+            if($komunikat_adm){
+                echo $komunikat_adm;
+            }
+        ?>
+    </div>
+    <?php
+        switch($action){  
+            case 'showLoginForm':
+                include 'adminTemplates/loginFormAdmin.php';
+                break;
+            case 'usersAdmin':
+                include 'adminTemplates/usersAdminMenu.php';
+                $sefora->usersAdmin();
+                break;
+            case 'braceletsAdmin':
+                include 'adminTemplates/usersAdminMenu.php';
+                $sefora->braceletsAdmin();
+                break;
+        }
     ?>
 </body>
 </html>

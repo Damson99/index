@@ -1,7 +1,23 @@
 <?php if(!$this) die();?>
+<?php /*$this->show("Podsumowanie");*/?>
+<center>
+    <p>1. Koszyk</p>
+    <p>2. Moje dane</p>
+    <p>3. Płatność</p>
+</center>
+<div id="basketDetails"style="grid-template-columns:none">
+    <h1>Dane do wysyłki</h1>
+</div>
 <div id="basketDetails">
-    <h1>Nie jesteś zalogowany</h1>
-    <p>Przed złożeniem zamówienia koniecznie musisz się <a href="index.php?action=showLoginForm">zalogować.</a></p>
-    <p>Jeśli nie masz konta <a href="index.php?action=showRegForm">stwórz je teraz.</a></p><br><br>
-    <p><a href="index.php?action=showBasket">Wróć do koszyka</a></p>
+    <div style="border-right:1px solid #999999;">
+        <hr><br><br>
+        <?php /*$this->showRegForm('up');*/?> 
+    </div>
+    <div>
+        <?php if(!isset($_SESSION['zalogowany'])){?>
+            <h1>Jeśli posiadzasz konto zaloguj się.</h1><hr><br><br>
+            <?php include 'loginSupport/loginForm.php';
+        }?>
+    </div>
+        <p><a href="index.php?action=showBasket">&#10094; Wróć do koszyka</a></p>
 </div>

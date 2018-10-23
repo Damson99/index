@@ -2,7 +2,7 @@
 class BasketItem{
     public $id;
     public $cena;
-    public $ile;
+    public $ile;    
     function __construct($id,$cena,$ile){
         $this->id=$id;
         $this->cena=$cena;

@@ -1,6 +1,5 @@
 <?php
-class Sefora {
-    private $dbo = null;
+class Sefora extends SeforaAdmin{
     public $zalogowany = null;
     
     function __construct($host,$user,$pass,$db){
@@ -38,7 +37,7 @@ class Sefora {
     }
     function getQuerySingleResult($query){
         if(!$this->dbo) return false;
-        if(!$result=$this->dbo->query($query)){
+        if(!$result=$this->query($query)){
             return false;
         }
         if($row=$result->fetch_row()){
@@ -57,41 +56,41 @@ class Sefora {
         }
         $email = $_POST['email'];
         $pass = $_POST['haslo'];
-        $email = strlen($email);
-        $pass = strlen($pass);
-        if($email < 5 || $email > 50 || $pass < 6 || $pass > 50){
+        $emailLength = strlen($email);
+        $passLength = strlen($pass);
+        if($emailLength < 5 || $emailLength > 50 || $passLength < 6 || $passLength > 50){
             return LOGIN_FAILED;
         }
         $email=$this->dbo->real_escape_string(strip_tags($email));
         $pass=$this->dbo->real_escape_string(strip_tags($pass));
-        $query="SELECT `Id`,`Haslo`,`Imie`,`Nazwisko` FROM Klienci WHERE `Email`='$email'";
+        $query="SELECT `Id`,`Haslo`,`Imie` FROM Klienci WHERE `Email`='$email'";
         if(!$result=$this->dbo->query($query)){
             return SERVER_ERROR;
         }
-        if($result->num_rows != 1){
+        if($result->num_rows <> 1){
             return LOGIN_FAILED;
         }else{
             $row=$result->fetch_row();
             $pass_db=$row[1];
-            if(crypt($pass,$pass_db) != $pass_db){
+            $salt='5o3_5$f';
+            $blowfish='3S1$5_3';
+            $hashedPass=crypt($pass,$salt.$blowfish);
+            if($hashedPass !== $pass_db){
                 return LOGIN_FAILED;
             }else{
-                $nazwa=$row[2].' '.$row[3];
+                $nazwa=$row[2];
                 $_SESSION['zalogowany'] = new User($row[0],$nazwa);
-                if(isset($_SESSION['przywileje'])){
-                $_SESSION['przywileje']=array();
-                }   
-                $query="SELECT PrzywilejeId FROM Klienci_Przywileje WHERE UserId="."$row[0]";
+                $this->zalogowany=new User($row[0],$nazwa);
+                if(!isset($_SESSION['przywileje'])){
+                    $_SESSION['przywileje']=array();
+                }
+                $query="SELECT PrzywilejeId FROM Klienci_Przywileje WHERE UserId='$row[0]'";
                 if($result=$this->dbo->query($query)){
                     while($row=$result->fetch_row()){
-                        $_SESSION['przywileje'][$row[0]]=true;
+                        $_SESSION['przywileje']=$row[0];
                     }
                 }
-                if(isset($SESSION['przywileje'][1])){
-                    return LOGIN_OK;
-                }else{
-                    return $_SESSION['przywileje'][$row[0]]=false;
-                }
+                return LOGIN_OK;
             }
         }
     }
@@ -108,19 +107,6 @@ class Sefora {
             }
         }
     }
-    /*function editAccountForm(){
-        if(!$this->dbo) SERVER_ERROR;
-        if(isset($_SESSION['zalogowany'])){
-            $user=$_SESSION['zalogowany']->id;
-        }
-        $query="SELECT * FROM Klienci WHERE `Id`='$user'";
-        include 'templates/editForm.php';
-        
-    }
-    function editAccount(){
-        if(!$this->dbo) SERVER_ERROR;
-        
-    }*/
     function deleteAccount(){
         if(!$this->dbo) SERVER_ERROR;
         if(isset($_SESSION['zalogowany'])){
@@ -128,72 +114,132 @@ class Sefora {
         }
         $query="DELETE FROM Klienci WHERE `Id`=$user";
         if(!$this->dbo->query($query)){
-            SERVER_ERROR;
+            return SERVER_ERROR;
         }else{
-            ACTION_OK;
             unset($_SESSION['zalogowany']);
             $this->zalogowany = null;
         }
+        return ACTION_OK;
     }
-    function showRegForm(){
+    function showRegForm($info){
         $reg=new Registration($this->dbo);
-        return $reg->showRegForm();
+        return $reg->showRegForm($info);
     }
     function registerUser(){
         $reg=new Registration($this->dbo);
         return $reg->registerUser();
     }
-    function showEditForm(){
+    function changePassForm(){
         $reg=new Registration($this->dbo);
-        return $reg->showEditForm();
+        return $reg->changePassForm();
+    }
+    function checkPass(){
+        $reg=new Registration($this->dbo);
+        return $reg->checkPass();
     }
     function editUser(){
         $reg=new Registration($this->dbo);
         return $reg->editUser();
     }
+    function getNews($limitNews,$toBack){
+        $brn=new Bracelets($this->dbo);
+        return $brn->getNews($limitNews,$toBack);
+    }
     function showSearchResult(){
-        if($_POST['bransoletka'] != ''){
-            $bransoletka=filter_input(INPUT_POST,'bransoletka',FILTER_SANITIZE_SPECIAL_CHARS);
-            $cond="`Nazwa` LIKE '%$bransoletka%'";
-        }else{
-            $cond='';
-            header("Location:index.php");
-        }
-        $query="SELECT `Nazwa`,`Sex`,`Cena`,`Images` FROM Bransoletki WHERE $cond GROUP BY `Id` ORDER BY `Nazwa`";
-        $komunikat=false;
-        if(!$result=$this->dbo->query($query)){
-            $komunikat="Wyniki wyszukiwania chwilowo są niedostępne";
-        }else if($result->num_rows < 1){
-            $komunikat="Brak wyników";
-        }
-        include 'templates/searchResult.php';
+        $brn=new Bracelets($this->dbo);
+        return $brn->showSearchResult();
     }
-    function getNews(){
-        
-        $query="SELECT `Nazwa`,`Sex`,`Cena`,`Images`,`Id` FROM Bransoletki ORDER BY Id DESC LIMIT 5";
-        if(!$result=$this->dbo->query($query)) header("Location:error.html");
-        include 'templates/searchResult.php';
-    }
-    function bransoletFor(){
-        $br = new Bransolets($this->dbo);
+    function couple(){
+        $br = new Bracelets($this->dbo);
         if(isset($_GET['brn'])){
             $brn=$_GET['brn'];
-        }else{
-            $brn='all';
         }
         switch($brn){
-            case 'unisex':
-                $br->unisex();
+            case 'Infinity':
+                $kind="WHERE Para=1 AND Nazwa LIKE '%Infinity%'";
+                $br->getCouple($kind,$brn);
                 break;
+            case 'NeverGiveUp':
+                $kind="WHERE Para=1 AND Nazwa LIKE '%Never Give Up%'";
+                $br->getCouple($kind,$brn);
+                break;
+            case 'Inne':
+                $kind="WHERE Para=1 AND Nazwa NOT LIKE '%Infinity%' AND Nazwa NOT LIKE '%Never Give Up%'";
+                $br->getCouple($kind,$brn);
+                break;
+        }
+    }
+    function braceletFor(){
+        $br = new Bracelets($this->dbo);
+        if(isset($_GET['brn'])){
+            $brn=$_GET['brn'];
+        }
+        $limit=20;
+        switch($brn){
             case 'women':
-                $br->women();
+                $sex="WHERE Sex='d'";
+                $jewellery='';
+                if(isset($_GET['jewellery'])){
+                    $women=$_GET['jewellery'];
+                    switch($women){
+                        case 'bransoletki':
+                            $jewellery="AND Nazwa LIKE '%Bransolet%'";
+                            break;
+                        case 'kolczyki':
+                            $jewellery="AND Nazwa LIKE '%Kolczyk%'";
+                            break;
+                        case 'naszyjniki':
+                            $jewellery="AND Nazwa LIKE '%Naszyjnik%'";
+                            break;
+                    }
+                }
+                $br->getBracelets($sex,$limit,$jewellery);
+                break;
+            case 'unisex':
+                $sex="WHERE Sex='u'";
+                $jewellery='';
+                if(isset($_GET['jewellery'])){
+                    $women=$_GET['jewellery'];
+                    switch($women){
+                        case 'bransoletki':
+                            $jewellery="AND Nazwa LIKE '%Bransolet%'";
+                            break;
+                        case 'kolczyki':
+                            $jewellery="AND Nazwa LIKE '%Kolczyk%'";
+                            break;
+                        case 'naszyjniki':
+                            $jewellery="AND Nazwa LIKE '%Naszyjnik%'";
+                            break;
+                    }
+                }
+                $br->getBracelets($sex,$limit,$jewellery);
                 break;
             case 'men':
-                $br->men();
+                $sex="WHERE Sex='m'";
+                $jewellery='';
+                if(isset($_GET['jewellery'])){
+                    $women=$_GET['jewellery'];
+                    switch($women){
+                        case 'bransoletki':
+                            $jewellery="AND Nazwa LIKE '%Bransolet%'";
+                            break;
+                        case 'naszyjniki':
+                            $jewellery="AND Nazwa LIKE '%Naszyjnik%'";
+                            break;
+                    }
+                }
+                $br->getBracelets($sex,$limit,$jewellery);
                 break;
-            default:
-            case 'all':
-                $br->all();
+            case 'boho':
+                $sex="";
+                $jewellery="AND Nazwa LIKE %BOHO%";
+                $br->getBracelets($sex,$limit,$jewellery);
+                break;
+            case 'breloki':
+                $sex="";
+                $jewellery="AND Nazwa LIKE %Breloki%";
+                $br->getBracelets($sex,$limit,$jewellery);
+                break;
         }
     }
     function showDetails(){
@@ -213,6 +259,18 @@ class Sefora {
         }
         include 'templates/showDetails.php';
     }
+    function toWishList(){
+        $brn=new Bracelets($this->dbo);
+        return $brn->toWishList();
+    }
+    function showWishList(){
+        $brn=new Bracelets($this->dbo);
+        return $brn->showWishList();
+    }
+    function deleteWishList(){
+        $brn=new Bracelets($this->dbo);
+        return $brn->deleteWishList();
+    }
     function toBasket(){
         $basket=new Basket($this->dbo);
         return $basket->add();
@@ -221,25 +279,16 @@ class Sefora {
         $basket=new Basket($this->dbo);
         $basket->show("Zawartość koszyka",true);
     }
-    function modifyBasket(){
-        $basket=new Basket($this->dbo);
-        $basket->modify();
-    }
     function deleteBasket(){
         $basket=new Basket($this->dbo);
         $basket->delete();
     }
     function checkout(){
-        if(isset($_SESSION['zalogowany'])){
-            $basket=new Basket($this->dbo);
-            $basket->show("Podsumowanie zamówienia",false);
-        }else{
-            include "templates/noLoginOrder.php";
-        }
+        $basket=new Basket($this->dbo);
+        $basket->checkout();
+    }
+    function orderConfirm(){
+        $basket=new Basket($this->dbo);
+        $basket->orderConfirm();
     }
 }
-
-
-
-
-

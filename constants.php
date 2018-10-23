@@ -7,6 +7,7 @@ define("PASSWORDS_DO_NOT_MATCH",5);
 define("EMPTY_BASKET",6);
 define("LOGIN_REQUIRED",7);
 define("NO_LOGIN_REQUIRED",8);
+define("INVALID_ID",9);
 
 define("ACTION_OK",101);
 define("ACTION_FAILED",102);
