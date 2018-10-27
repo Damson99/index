@@ -1,5 +1,5 @@
 <?php if(!isset($sefora)) die();?>
-<div class="pOfferts" style="font-family:Brush Script MT, Brush Script Std, cursive;font-size:50px;"><i>Witaj w pracowni Sefory</i></div>
+<div class="pOffertsWel"><i>Witaj w pracowni Sefory</i></div>
 <div class="pOfferts">
     <div class="pDiv">
     <nav id="mainNav">
@@ -62,7 +62,7 @@
 <?php $sefora->couple();?>
 <hr>
 <div class="pOfferts">Nowości</div>
-    <div id="mainWrapper" style="margin-left:15%;">
+    <div id="mainWrapper">
         <div class="slideshow-container">
             <div class="mySlides fade">
                <?=$sefora->getNews(0,4)?>
@@ -74,7 +74,7 @@
                <?=$sefora->getNews(8,4)?>
             </div>
             <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-            <a class="next" onclick="plusSlides(1)" style="left:1250px;position:absolute;">&#10095;</a>
+            <a class="nextMainWrapper" onclick="plusSlides(1)">&#10095;</a>
         </div>
     </div>  
 <div>

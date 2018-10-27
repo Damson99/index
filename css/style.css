@@ -72,7 +72,7 @@ aside ul{
 #mainNav>ul>li{
     list-style-type: none;
     display: inline-block;
-    padding: 0px 50px;
+    padding: 0px 40px;
 }
 #mainNav>ul>li:hover{
     background-color: transparent;
@@ -95,7 +95,7 @@ ul#subMenu a{
     font-size: 20px;
     padding:10px 30px 10px 0px;
 }
- #mainNav li:hover #subMenu{
+#mainNav li:hover #subMenu{
      z-index: 20;
      opacity: 1;
 }
@@ -138,10 +138,9 @@ a:hover{
     z-index: 30;
     position: fixed;
     box-shadow: 0px 4px 5px #444444;
-    background-image: linear-gradient(to right,#999999,black,black,black,black, #444444);
+    background-image: linear-gradient(to right,black,black,black,black, #444444);
     width: 100%;
-    min-height: 85px;
-    max-height: 140px;
+    height: 85px;
     color: white;
 }
 .header{
@@ -194,6 +193,7 @@ a:hover{
 .loginInfo div{
     overflow: hidden;
     max-width:100px;
+    min-width: 85px;
 }
 .loginInfo img{
     width:25px;
@@ -207,13 +207,16 @@ a{
     width: auto;
     display: grid;
 }
-.pOfferts,#userMenu{
+.pOfferts,#userMenu,.pOffertsWel{
     display: grid;
     font-weight: 100;
     padding: 10px;
-    margin: 0px 200px 0px 200px;
     text-align: center;
     font-size: 30px;
+}
+.pOffertsWel{    
+    font-family:Brush Script MT, Brush Script Std, cursive;
+    font-size:50px;
 }
 .pDiv{
     text-align: center;
@@ -223,7 +226,7 @@ a{
     height: 40px;
     width: auto;
     font-weight: 100;
-    font-size: 30px;
+    font-size: 28px;
     color: black;
 }
 .pDiv a:hover{
@@ -308,10 +311,11 @@ ul{
     list-style-type: none;
 }
 #couple{
-    margin: 2% 19% 2% 21%;
+    margin: 2% 19% 2% 19%;
     display: grid;
     grid-template-columns:repeat(3,1fr);
     overflow: hidden;
+    grid-gap: 20px;
 }
 #couple a{
     -webkit-transition: all 0.5s ease;
@@ -337,7 +341,7 @@ ul{
     opacity: 0.5;
 }
 #mainWrapper{
-    margin: 2% 19% 2% 21%;
+    margin: 2% 0% 2% 16%;
     display: grid;
     grid-template-columns:repeat(4,1fr);
 }
@@ -589,7 +593,10 @@ article{
 .mySlides{
     display: none;
 }
-.prev, .next{
+.nextMainWrapper{
+    margin-right: -760px;
+}
+.prev,.nextMainWrapper, .next{
     margin-top: -300px;
     cursor: pointer;
     position: absolute;
@@ -602,11 +609,11 @@ article{
 .prev{
     border-radius: 0px 3px 3px 0px;
 }
-.next{
+.next,.nextMainWrapper{
     border-radius: 3px 0px 0px 3px;
     right: 50px;
 }
-.prev:hover, .next:hover{
+.prev:hover,.nextMainWrapper:hover, .next:hover{
     opacity: 0.6;
     height: auto;
     text-decoration: none;
