@@ -83,7 +83,7 @@ $komunikat = $sefora->getMessage();
                                 $sefora->setMessage("Błąd");
                                 break;
                         }
-                        header("Location:index.php?action=braceletFor&brn=all");
+                        header("Location:index.php?action=showBasket");
                         break;
                     case 'deleteBasket':
                         $sefora->deleteBasket();
@@ -166,7 +166,7 @@ $komunikat = $sefora->getMessage();
                             case SERVER_ERROR:
                                 $sefora->setMessage("Błąd serwera"); 
                         }
-                        header("Location:index.php?action=braceletFor&brn=all");
+                        header("Location:index.php?action=showWishList");
                         break;
                     case 'showWishList':
                         switch($sefora->showWishList()){

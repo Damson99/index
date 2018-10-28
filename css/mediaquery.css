@@ -1,55 +1,97 @@
 @media all and (max-width: 1660px){
+    /*MAIN*/
     #couple{
-        margin:2% 0% 2% 11%;
+        margin:2% 0% 2% 7%;
     }
-    #couple img{
-        width: 280px;
-        height: 280px;
-    }
-    #couple a{
-        width: 280px;
-        height: 280px;
-        font-size: 20px;
+    #mainWrapper{
+        margin:2% 0% 2% 10%;
     }
     .pOfferts,#userMenu{
         margin:0px;
         padding: 0px;
     }
-    
+    #mainNav>ul>li{
+        padding: 20px 40px 20px 40px;
+    }
+    /*BASKET*/
+    #detailsDiv,#secondDetails,#basketDetails{
+        margin: 2% 0% 2% 10%;
+        width: 1100px;
+        padding: 20px;
+    }
 }
 
 @media all and (max-width: 1380px){
+    /*MAIN*/
+    #loginFormWrapper{
+        margin-top: 13%;
+        min-width: 460px;
+    }
+    #loginFormWrapper input{
+        width: 100%;
+        height: 50px;
+        font-size: 20px;
+    }
+    #loginFormWrapper p,#loginFormWrapper a{
+        font-size: 24px;
+    }
+    #loginFormWrapper h1{
+        font-size: 30px;
+    }
     #mainWrapper{
-        margin:2% 0% 2% 20%;
+        margin:2% 10% 2% 10%;
         grid-template-columns:repeat(2,1fr);
     }
-    .nextMainWrapper{
-        margin-right: -250px;
+    .wrapper{
+        width: 400px; 
     }
-    .header{
-        margin-left: 20px;
+    .wrapperImage{
+        width: 400px;
+        height: 400px;
+    }
+    .wrapperHeader a{
+        font-size: 30px;
+    }
+    .imageLog{
+        width: 200px;
+        height: 200px;
+        margin: -170px 0px 0px 100px;
+    }
+    .secondWrapper{
+        margin-top: 30px;
+        font-size: 25px;
+    }
+    .heart{
+        width: 30px;
+        height: 30px;
+        margin-left: 190px;
+    }
+    .heart::after, .heart::before{
+        width: 30px;
+        height: 30px;
+    }
+    .secondWrapper a{
+        height: 45px;
+        font-size: 30px;
+        padding-top: 15px;
+    }
+    .nextMainWrapper{
+        margin-right: -270px;
+    }
+    .header,.loginInfo{
+        margin-left:30%;
     }
     .search{
         width: 200px;
     }
-}
-
-@media all and (max-width: 1200px){
     #couple{
-        grid-auto-rows: 400px;
+        grid-auto-rows: 300px;
     }
-    #couple img{
-        width: 250px;
-        height: 250px;
-    }
-    #couple a{
-        width: 250px;
-        height: 250px;
+    #couple a,#couple img{
+        width: 300px;
+        height: 300px;
         font-size: 20px;
     }
-}
-
-@media all and (max-width: 992px){
     #topDiv{
         height: 150px;
     }
@@ -57,37 +99,86 @@
         float: left;
         padding: 20px;
     }
-    .pOfferts,#userMenu{
-        padding: 10px;
-        margin: 0px 0px 0px 10%;
+    #mainNav>ul>li{
+        padding: 0px 10px 0px 10px;
+    }
+    .backToTop{
+        padding: 12px 30px 20px 30px;
+    }
+    /*BASKET*/
+    #detailsDiv,#secondDetails,#basketDetails{
+        margin: 2% 0% 2% 25%;
+        width: 500px;
+        padding: 20px;
+    }
+    #deleteProduct{
+        margin-left: 270px;
+    }
+    .basketItem{
+        margin:0px 0px 0px 10px;
+        grid-template-columns: repeat(1,1fr);
+        grid-gap: 0px;
+    }
+    #basketDetails textarea{
+        width: 350px;
     }
 }
 
-@media all and (max-width:700px){
-    .pOfferts,#userMenu,.pOffertsWel{
-        padding: 0px;
-        margin: 0px;
+@media all and (max-width: 992px){
+    /*MAIN*/
+    #mainWrapper{
+        margin:2% 0% 2% 5%;
+        grid-template-columns:repeat(2,1fr);
     }
-    .pOffertsWel{
+    .dot{
+        height: 50px;
+        width: 50px;
+    }
+    .prev,.nextMainWrapper, .next{
+        margin-top: -200px;
+    }
+    .slideshow-container{
+        height: 350px;
+        width: 350px;
+    }
+    .rightDiv{
+        grid-column:1/8; 
+        font-size: 10px;
+    }
+    article{
+        width: 100%;
+    }
+    #detailsDiv h1{
         font-size: 30px;
     }
+    #detailsDiv .pic{
+        width: 300px;
+        height: 300px;
+    }
+    ul#subMenu{
+        width: 80px;
+        padding: 5px 5px 5px 15px;
+    }
     ul#subMenu a{
+        padding:0px;
         font-size: 10px;
+    }
+    #mainNav>ul>li{
+        padding: 0px;
+    }
+    #mainNav a{
+        font-size: 25px;
     }
     .pDiv a{
         font-size: 15px;
         height: 20px;
     }
     #couple{
-        grid-auto-rows: 120px;
+        grid-auto-rows: 300px;
     }
-    #couple img{
-        width: 100px;
-        height: 100px;
-    }
-    #couple a{
-        width: 100px;
-        height: 100px;
-        font-size: 10px;
+    #couple a,#couple img{
+        width: 250px;
+        height: 250px;
+        font-size: 14px;
     }
 }

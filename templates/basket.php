@@ -40,7 +40,7 @@
             }else{
                 $message="Wiadomość do sprzedawcy. Proszę podać obwód nadgarstka zmierzony na styk zgodnie ze zdjęciem i kolor wybranej bransoletki.";
             }?>
-            <textarea name="message" style="margin-bottom:20px;border:red 1px solid;" placeholder="<?=$message?>"<?=$disabled?>></textarea>
+            <textarea name="message" placeholder="<?=$message?>"<?=$disabled?>></textarea>
             <div></div>
             <?php if($action!='checkout'):?>
             <input type="submit" value="Do kasy">
