@@ -10,11 +10,4 @@
         <input type="submit" value="Zaloguj">
     </form>
     <a href="index.php">Wróć do strony głównej</a>
-    <div class="komunikat">
-        <?php 
-            if($komunikat_adm){
-                echo $komunikat_adm;
-            }
-        ?>
-    </div>
 </div>
