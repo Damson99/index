@@ -2,7 +2,7 @@
 <b><center>Id ostatniej bransoletki <?php $this->lastId();?></center></b>
 
 <div id="loginFormWrapper">
-    <img src="imageLog.jpg" class="imageLog"><br>
+    <img src="img/imageLog.jpg" class="imageLog"><br>
     <h1>Dodaj nową bransoletkę</h1>
     <form action="index2.php?action=braceletsAdmin&wtd=<?=$wtd?>" method="post">
         <p>Id</p>
