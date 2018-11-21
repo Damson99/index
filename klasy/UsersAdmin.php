@@ -204,16 +204,20 @@ class UsersAdmin{
             return INVALID_USER_ID;
         }
         $id=(int)$_GET['id'];
-        $query="DELETE FROM Klienci WHERE `Id`=$id";
+        $query="DELETE FROM Klienci WHERE `Id`='$id'";
         if(!$this->dbo->query($query)){
             return SERVER_ERROR;
             if($this->dbo->affected_rows==0){
                 return USER_NOT_FOUND;
             }else{
-                return ACTION_OK;
+                $query="DELETE FROM Adresy WHERE `Id`='$id'";
+                if(!$this->dbo->query($query)){
+                    return SERVER_ERROR;
+                }else{
+                    return ACTION_OK;
+                }
             }
         }
-        return ACTION_OK;
     }
     function getQuerySingleResult($query){
         if(!$this->dbo) return false;

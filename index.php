@@ -52,9 +52,9 @@ $komunikat = $sefora->getMessage();
                     case 'showRegForm':
                         if($sefora->zalogowany){
                             $sefora->setMessage("Jesteś zalogowany");
+                            header("Location:index.php?action=braceletFor&brn=all");
                         }
-                        $info='';
-                        $sefora->showRegForm($info);
+                        $sefora->showRegForm();
                         break;
                     case 'logout':
                         include 'loginSupport/logout.php';
@@ -92,40 +92,32 @@ $komunikat = $sefora->getMessage();
                     case 'checkout':
                         $sefora->checkout();
                         break;
-                    case 'userUpdateForm':
-                        $reg=new Registration($sefora->dbo);
-                        $reg->showRegForm('up');
+                    case 'showAdressForm':
+                        $sefora->showAdressForm();
                         break;
-                    case 'userUpdate':
-                        $basket=new Basket($sefora->dbo);
-                        switch($basket->userUpdate()){
+                    case 'registerAdress':
+                        $reg=new Registration($sefora->dbo);
+                        switch($reg->registerAdress()){
                             case ACTION_OK:
                                 $sefora->setMessage("Akcja udana.");
                                 header("Location:index.php?action=showBasket");
+                                /*dolacz formularz z platnosciami*/
                                 break;
                             case FORM_DATA_MISSING:
                                 $sefora->setMessage("Wypełnij wymagane pola formularza");
-                                header("Location:index.php?action=userUpdateForm");  
+                                header("Location:index.php?action=userAdressForm");  
                                 break;
                             case LOGIN_FAILED:
-                                $sefora->setMessage("imię od 3 do 30"."<br>"."nazwisko od 3 do 30");
-                                header("Location:index.php?action=userUpdateForm");  
-                                break;
-                            case ACTION_FAILED:
-                                $sefora->setMessage("Obecnie rejestracja nie jest możliwa");
-                                header("Location:index.php?action=userUpdateForm");  
-                                break;
-                            case USER_NAME_ALREADY_EXISTS:
-                                $sefora->setMessage("Konto nie istnieje. Prosimy założyć nowe.");
-                                header("Location:index.php?action=userUpdateForm");  
+                                $sefora->setMessage("Podane frazy są za krótkie lub za długie");
+                                header("Location:index.php?action=userAdressForm");  
                                 break;
                             case NO_LOGIN_REQUIRED:
                                 $sefora->setMessage("Najpierw się zaloguj.");
-                                header("Location:index.php?action=userUpdateForm");  
+                                header("Location:index.php?action=userAdressForm");  
                                 break;
                             case SERVER_ERROR:
                                 $sefora->setMessage("Błąd serwera");
-                                header("Location:index.php?action=userUpdateForm");
+                                header("Location:index.php?action=userAdressForm");
                                 break;
                         }
                         break;
@@ -174,10 +166,10 @@ $komunikat = $sefora->getMessage();
                                 $sefora->setMessage("Dodano nowy produkt");
                                 break;
                             case EMPTY_BASKET:
-                                $sefora->setMessage("Lista życzeń jest pusta");
+                                echo '<center><h3>Lista życzeń jest pusta</h3></center><br><br>';
                                 break;
                             case LOGIN_REQUIRED:
-                                $sefora->setMessage("Aby zobaczyć listę życzeń musisz się zalogować");
+                                echo '<center><h3>Najpierw musisz się zalogować</h3></center>';
                                 break;
                             case SERVER_ERROR:
                                 $sefora->setMessage("Błąd serwera");
@@ -250,5 +242,9 @@ $komunikat = $sefora->getMessage();
         <?php include 'footer.php'; ?> 
         <center>Copyright © Sefora</center><br>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="templates/scrollForm.js"></script>
+    <script src="templates/scrollMenu.js"></script>
+    <script src="templates/slider.js"></script>
 </body>
 </html>

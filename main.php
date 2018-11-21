@@ -4,33 +4,36 @@
     <div class="pDiv">
     <nav id="mainNav">
         <ul>
-            <li><a href="index.php?action=braceletFor&amp;brn=women">Biżuteria damska</a>
+            <li><a id="scroll">Biżuteria damska<div class="operatotLub">&#10095;</div></a>
                 <ul id="subMenu">
+                    <a href="index.php?action=braceletFor&amp;brn=women">&#10095; Biżuteria damska</a>
                     <a href="index.php?action=braceletFor&amp;brn=women&jewellery=bransoletki">&#10095; Bransoletki</a>
                     <a href="index.php?action=braceletFor&amp;brn=women&jewellery=kolczyki">&#10095; Kolczyki</a>
                     <a href="index.php?action=braceletFor&amp;brn=women&jewellery=naszyjniki">&#10095; Naszyjniki</a>
                 </ul>
             </li>
-            <li><a href="index.php?action=braceletFor&amp;brn=unisex">Biżuteria unisex</a>
-                <ul id="subMenu">
+            <li><a id="scroll1">Biżuteria unisex<div class="operatotLub">&#10095;</div></a>
+                <ul id="subMenu1">
+                    <a href="index.php?action=braceletFor&amp;brn=unisex">&#10095; Biżuteria unisex</a>
                     <a href="index.php?action=braceletFor&amp;brn=unisex&jewellery=bransoletki">&#10095; Bransoletki</a>
                     <a href="index.php?action=braceletFor&amp;brn=unisex&jewellery=kolczyki">&#10095; Kolczyki</a>
                     <a href="index.php?action=braceletFor&amp;brn=unisex&jewellery=naszyjniki">&#10095; Naszyjniki</a>
                 </ul>
             </li>
-            <li><a href="index.php?action=braceletFor&amp;brn=men">Biżuteria męska</a>
-                <ul id="subMenu">
+            <li><a id="scroll2">Biżuteria męska<div class="operatotLub">&#10095;</div></a>
+                <ul id="subMenu2">
+                    <a href="index.php?action=braceletFor&amp;brn=men">&#10095; Biżuteria męska</a>
                     <a href="index.php?action=braceletFor&amp;brn=men&jewellery=bransoletki">&#10095; Bransoletki</a>
                     <a href="index.php?action=braceletFor&amp;brn=men&jewellery=naszyjniki">&#10095; Naszyjniki</a>
                 </ul>
             </li>
-            <li><a href="index.php?action=braceletFor&amp;brn=boho">Bransoletki BOHO</a>
-                <ul id="subMenu">
+            <li><a id="scroll3">Bransoletki BOHO<div class="operatotLub">&#10095;</div></a>
+                <ul id="subMenu3">
                     <a href="index.php?action=braceletFor&amp;brn=boho">&#10095; Bransoletki BOHO</a>
                 </ul>
             </li>
-            <li><a href="index.php?action=braceletFor&amp;brn=breloki">Breloki</a>
-                <ul id="subMenu">
+            <li><a id="scroll4">Breloki<div class="operatotLub">&#10095;</div></a>
+                <ul id="subMenu4">
                     <a href="index.php?action=braceletFor&amp;brn=breloki">&#10095; Breloki</a>
                 </ul>
             </li>
@@ -80,4 +83,3 @@
 <div>
     <span class="dot" onclick="currentSlide(<?=$i++;?>)"></span>
 </div>
-<script src="templates/slider.js"></script>

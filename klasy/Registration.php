@@ -1,72 +1,21 @@
 <?php
 class Registration{
     private $dbo=null;
-    private $fields=array();
     
     function __construct($dbo){
         $this->dbo=$dbo;
-        $this->initFields();
+        $this->dbo->query('SET NAMES utf8');
+        $this->dbo->query('SET CHARACTER_SET utf8_unicode_ci');
     }
-    function initFields(){
-        if(isset($_GET['action'])){
-            $action=$_GET['action'];
-        }
-        if($action!=='userUpdateForm'){
-            $this->fields['email'] = new FormInput('email','Email','','email');
-            $this->fields['haslo'] = new FormInput('haslo','Hasło','','password');
-            $this->fields['haslo2'] = new FormInput('haslo2','Powtórz hasło','','password');
-        }
-        $this->fields['imie'] = new FormInput('imie','Imię','','');
-        $this->fields['nazwisko'] = new FormInput('nazwisko','Nazwisko','','');
-        $this->fields['ulica'] = new FormInput('ulica','Ulica','','');
-        $this->fields['nr_domu'] = new FormInput('nr_domu','Numer domu','','');
-        $this->fields['nr_mieszkania'] = new FormInput('nr_mieszkania','Numer mieszkania','','');
-        $this->fields['miejscowosc'] = new FormInput('miejscowosc','Miejscowość','','');
-        $this->fields['kod'] = new FormInput('kod','Kod pocztowy','','');
-        $this->fields['kraj'] = new FormInput('kraj','Kraj','','');
-    }
-    function showRegForm($info){
-        foreach($this->fields as $name=>$field){
-            $field->value=isset($_SESSION['formData'][$name]) ? $_SESSION['formData'][$name]:'';
-        }
-        $formData=$this->fields;
-        if(isset($_SESSION['formData'])){
-            unset($_SESSION['formData']);
-        }
-        if(isset($_SESSION['zalogowany'])){
-            $userId=$_SESSION['zalogowany']->id;
-            $query="SELECT * FROM Klienci WHERE Id='$userId'";
-            if(!$result=$this->dbo->query($query)){
-                return SERVER_ERROR;
-            }
-            if(!$rowForm=$result->fetch_row()){
-                return SERVER_ERROR;
-            }
-        }
-        if($info==='up'){
-            include 'loginSupport/regFormUpdate.php';
-        }else{
-            include 'loginSupport/regForm.php';
-        }
+    function showRegForm(){
+        include 'loginSupport/regForm.php';
     }
     function registerUser(){
-        foreach($this->fields as $name=>$val){
-            if(!isset($_POST[$name])){
-                return FORM_DATA_MISSING;
-            }
-        }
-        /*Wyrażenie regularne sprawdzające długość ciągów i niedozwolone znaki */
         $email=$_POST['email'];
         $haslo=$_POST['haslo'];
         $haslo2=$_POST['haslo2'];
         $imie=$_POST['imie'];
         $nazwisko=$_POST['nazwisko'];
-        $ulica=$_POST['ulica'];
-        $nr_domu=$_POST['nr_domu'];
-        $nr_mieszkania=$_POST['nr_mieszkania'];
-        $miejscowosc=$_POST['miejscowosc'];
-        $kod=$_POST['kod'];
-        $kraj=$_POST['kraj'];
         
         $emailLength=strlen($email);
         $hasloLength=strlen($haslo);
@@ -76,40 +25,25 @@ class Registration{
         if($emailLength < 5 || $emailLength > 50 || $hasloLength < 6 || $hasloLength > 50 || $haslo2Length < 6 || $haslo2Length > 50 || $imieLength < 3 || $imieLength > 30 || $nazwiskoLength < 3 || $nazwiskoLength > 30){
             return LOGIN_FAILED;
         }
-        $fieldsFromForm=array();
-        $emptyFields=false;
-        foreach($this->fields as $name=>$val){
-            if($val->type != 'password'){
-                $fieldsFromForm[$name]=filter_input(INPUT_POST,$name,FILTER_SANITIZE_SPECIAL_CHARS);
-            }else{
-                $fieldsFromForm[$name]=$_POST[$name];
-            }
-            $fieldsFromForm[$name]=$this->dbo->real_escape_string($fieldsFromForm[$name]);
-            if($email=='' || $haslo=='' || $haslo2=='' || $imie=='' || $nazwisko==''){
-                $emptyFields=true;
-            }
+        $email=$this->dbo->real_escape_string($email);
+        $haslo=$this->dbo->real_escape_string($haslo);
+        $haslo2=$this->dbo->real_escape_string($haslo2);
+        $imie=$this->dbo->real_escape_string($imie);
+        $nazwisko=$this->dbo->real_escape_string($nazwisko);
+        if($email=='' || $haslo=='' || $haslo2=='' || $imie=='' || $nazwisko==''){
+            $emptyFields=true;
         }
-        if($emptyFields){
-            unset($fieldsFromForm['haslo']);
-            unset($fieldsFromForm['haslo2']);
-            $_SESSION['formData']=$fieldsFromForm;
-            return FORM_DATA_MISSING;
-        }
-        $query="SELECT COUNT(*) FROM Klienci WHERE Email='".$fieldsFromForm['email']."'";
+        $query="SELECT COUNT(*) FROM Klienci WHERE Email='$email'";
         if($this->getQuerySingleResult($query) > 0){
             return USER_NAME_ALREADY_EXISTS;
         }
-        if($fieldsFromForm['haslo'] != $fieldsFromForm['haslo2']){
+        if($haslo != $haslo2){
             return PASSWORDS_DO_NOT_MATCH;
         }
-        unset($fieldsFromForm['haslo2']);
-        unset($this->fields['haslo2']);
         $salt='5o3_5$f';
         $blowfish='3S1$5_3';
-        $fieldsFromForm['haslo']=crypt($fieldsFromForm['haslo'],$salt.$blowfish);
-        $fieldNames='`'.implode('`,`',array_keys($this->fields)).'`';
-        $fieldVals='\''.implode('\',\'',$fieldsFromForm).'\'';
-        $query="INSERT INTO Klienci ($fieldNames) VALUES ($fieldVals)";
+        $haslo=crypt($haslo,$salt.$blowfish);
+        $query="INSERT INTO Klienci VALUES (0,'$email','$haslo','$imie','$nazwisko')";
         if($this->dbo->query($query)){
             $query="SELECT `Id`,`Imie`,`Nazwisko` FROM Klienci WHERE `Email`='$email'";
             if(!$result=$this->dbo->query($query)){
@@ -121,13 +55,66 @@ class Registration{
                 $row=$result->fetch_row();
                 $nazwa=$row[1].' '.$row[2];
                 $_SESSION['zalogowany'] = new User($row[0],$nazwa);
-                $this->zalogowany=new User($row[0],$nazwa);
-                return ACTION_OK; 
+                $this->zalogowany=new User($row[0],$nazwa); 
             }
         }else{
             return ACTION_FAILED;
         }
+        $userId=$_SESSION['zalogowany']->id;
+        $query="INSERT INTO adresy VALUES('$userId','','','','')";
+        if(!$result=$this->dbo->query($query)){
+            return SERVER_ERROR;
+        }else{
+            return ACTION_OK;
+        }
         include 'loginSupport/register.php';
+    }
+    function showAdressForm(){
+        if(isset($_SESSION['zalogowany'])){
+            $userId=$_SESSION['zalogowany']->id;
+            $query="SELECT * FROM Adresy WHERE Id='$userId'";
+            if(!$result=$this->dbo->query($query)){
+                return SERVER_ERROR;
+            }
+            if(!$rowForm=$result->fetch_row()){
+                return SERVER_ERROR;
+            }
+            include 'loginSupport/regFormUpdate.php';
+        }
+    }
+    function registerAdress(){
+        if(isset($_SESSION['zalogowany'])){
+            $id=$_SESSION['zalogowany']->id;
+        }else{
+            return NO_LOGIN_REQUIRED;
+        }
+        $adres=$_POST['adres'];
+        $miejscowosc=$_POST['miejscowosc'];
+        $kod=$_POST['kod'];
+        $kraj=$_POST['kraj'];
+        if($adres=='' || $miejscowosc==''||$kod==''||$kraj==''){
+                return FORM_DATA_MISSING;
+        }
+        
+        $adresLength=strlen($adres);
+        $miejscowoscLength=strlen($miejscowosc);
+        $kodLength=strlen($kod);
+        $krajLength=strlen($kraj);
+        
+        if($adresLength < 4 || $adresLength > 81||$miejscowoscLength < 4 || $miejscowoscLength > 60|| $kodLength < 5 || $kodLength > 7|| $krajLength < 3 || $krajLength > 40){
+            return LOGIN_FAILED;
+        }
+        $adres=$this->dbo->real_escape_string($adres);
+        $miejscowosc=$this->dbo->real_escape_string($miejscowosc);
+        $kod=$this->dbo->real_escape_string($kod);
+        $kraj=$this->dbo->real_escape_string($kraj);
+        
+        $query="UPDATE Adresy SET `Adres`='$adres',`Miejscowosc`='$miejscowosc',`Kod`='$kod',`Kraj`='$kraj' WHERE `Id`='$id'";
+        if(!$this->dbo->query($query)){
+            return SERVER_ERROR;
+        }else{
+            return ACTION_OK;
+        }
     }
     function changePassForm(){
         if(!$this->dbo) SERVER_ERROR;

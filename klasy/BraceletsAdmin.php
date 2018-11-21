@@ -179,7 +179,16 @@ class BraceletsAdmin{
         $kolor=$this->dbo->real_escape_string($kolor);
         $zdjecia=$this->dbo->real_escape_string($zdjecia);
         $para=$this->dbo->real_escape_string($para);
-        
+        if(isset($_POST['upload'])){
+            for($i=1;$i<8;$i++){
+                $file_name=$_FILES["file$i"]['name'];
+                $file_type=$FILES["file$i"]['type'];
+                $file_size=$FILES["file$i"]['size'];
+                $file_tem_loc=$_FILES["file$i"]['tmp_name'];
+                $file_store="templates/images/".$file_name;
+                move_uploaded_file($file_tem_loc,$file_store);
+            }
+        }
         if($action=='edit'){
             $query="UPDATE Bransoletki Set Nazwa='$nazwa',Sex='$sex',Opis='$opis',Cena='$cena',Kolor='$kolor',Images='$zdjecia',Para='$para' WHERE `Id`='$id'";
         }else{

@@ -57,6 +57,7 @@ if(!isset($sefora->zalogowany_adm)){
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/mediaquery.css">
     <link rel="Shortcut icon" href="img/favicon.png">
     <title>Sefora Administracja</title>
 </head>

@@ -1,0 +1,30 @@
+$(document).ready(function(){
+    $('#scroll').click(function(){
+        $('#subMenuf').stop().slideToggle(300);
+   }); 
+});
+$(document).ready(function(){
+    $('#scroll').click(function(){
+        $('#subMenu').stop().slideToggle(300);
+   }); 
+});
+$(document).ready(function(){
+    $('#scroll1').click(function(){
+        $('#subMenu1').stop().slideToggle(300); 
+   }); 
+});  
+$(document).ready(function(){
+    $('#scroll2').click(function(){
+        $('#subMenu2').stop().slideToggle(300); 
+   }); 
+});  
+$(document).ready(function(){
+    $('#scroll3').click(function(){
+        $('#subMenu3').stop().slideToggle(300); 
+   }); 
+});  
+$(document).ready(function(){
+    $('#scroll4').click(function(){
+        $('#subMenu4').stop().slideToggle(300); 
+   }); 
+});  

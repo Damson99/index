@@ -121,9 +121,13 @@ class Sefora extends SeforaAdmin{
         }
         return ACTION_OK;
     }
-    function showRegForm($info){
+    function showRegForm(){
         $reg=new Registration($this->dbo);
-        return $reg->showRegForm($info);
+        return $reg->showRegForm();
+    }
+    function showAdressForm(){
+        $reg=new Registration($this->dbo);
+        return $reg->showAdressForm();
     }
     function registerUser(){
         $reg=new Registration($this->dbo);
@@ -136,10 +140,6 @@ class Sefora extends SeforaAdmin{
     function checkPass(){
         $reg=new Registration($this->dbo);
         return $reg->checkPass();
-    }
-    function editUser(){
-        $reg=new Registration($this->dbo);
-        return $reg->editUser();
     }
     function getNews($limitNews,$toBack){
         $brn=new Bracelets($this->dbo);
